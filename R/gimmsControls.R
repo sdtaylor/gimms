@@ -14,9 +14,15 @@ downloader <- function(x, dsn = getwd(), overwrite = FALSE, quiet = TRUE,
         if (!quiet)
           cat("File", destfile, "already exists in destination folder. Proceeding to next file ...\n")
       } else {
-        try(download.file(i, destfile = destfile, mode = mode,
+        destfile_temp=paste0(destfile,'.part')
+        status=try(download.file(i, destfile = destfile_temp, mode = mode,
                           quiet = quiet, ...), silent = TRUE)
-      }
+        if (status==0) {
+          file.rename(destfile_temp, destfile)
+         } else {
+          if(!quiet)
+            cat("Failed to download", destfile, ", status code: ",status)
+            }
     }
 
 
@@ -38,8 +44,15 @@ downloader <- function(x, dsn = getwd(), overwrite = FALSE, quiet = TRUE,
         if (!quiet)
           cat("File", destfile, "already exists in destination folder. Proceeding to next file ...\n")
       } else {
-        try(download.file(i, destfile = destfile, mode = mode,
+        destfile_temp=paste0(destfile,'.part')
+        try(download.file(i, destfile = destfile_temp, mode = mode,
                           quiet = quiet, ...), silent = TRUE)
+        if (status==0) {
+          file.rename(destfile_temp, destfile)
+         } else {
+          if(!quiet)
+            cat("Failed to download", destfile, ", status code: ",status)
+            }
       }
     })
 
